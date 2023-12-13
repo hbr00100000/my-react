@@ -1,7 +1,7 @@
 import { REACT_ELEMENT_TYPE } from "shared/ReactSymbols";
 import hasOwnProperty from "shared/hasOwnProperty";
 
-// react自己的保留属性
+// 保留属性 react自用的
 const RESERVED_PROPS = {
   key: true,
   ref: true,
@@ -9,29 +9,32 @@ const RESERVED_PROPS = {
   __source: true,
 };
 
-const jsxDEV = (type, config, maybeKey) => {
+/**
+ *
+ * @param {*} type 类型
+ * @param {*} config 配置 children
+ * @param {*} maybeKey key
+ * @param {*} source
+ * @param {*} self
+ */
+export function jsxDEV(type, config, maybeKey, source, self) {
   let propName;
   const props = {};
   let key = null;
   let ref = null;
 
-  //? 暂时不知道maybeKey是干什么用的，也不知道代表那一块
-  // 判断作用域里面将数值转成了string类型
   if (maybeKey !== undefined) {
     key = "" + maybeKey;
   }
 
-  // 判断作用域里面将数值转成了string类型
   if (hasValidKey(config)) {
     key = "" + config.key;
   }
 
-  // 将config中的ref拿了出来赋值
   if (hasValidRef(config)) {
     ref = config.ref;
   }
 
-  // 抽离react自己的保留字，将其他的属性赋值给props
   for (propName in config) {
     if (
       hasOwnProperty.call(config, propName) &&
@@ -41,7 +44,6 @@ const jsxDEV = (type, config, maybeKey) => {
     }
   }
 
-  //? 不知道type中defaultProps是干什么的
   if (type && type.defaultProps) {
     const defaultProps = type.defaultProps;
     for (propName in defaultProps) {
@@ -51,25 +53,40 @@ const jsxDEV = (type, config, maybeKey) => {
     }
   }
 
+  // element
   return ReactElement(type, key, ref, props);
-};
+}
 
-// 校验key是否为undefined
-const hasValidKey = (config) => {
+/**
+ * 验证key不为undefined
+ * @param {*} config
+ * @returns
+ */
+function hasValidKey(config) {
   return config.key !== undefined;
-};
+}
 
-// ref
-const hasValidRef = (config) => {
+/**
+ * 验证ref不为undefined
+ * @param {*} config
+ * @returns
+ */
+function hasValidRef(config) {
   return config.ref !== undefined;
-};
+}
 
-class ReactElement {
-  constructor(type, key, ref, props) {
-    (this.$$typeof = REACT_ELEMENT_TYPE),
-      (this.type = type),
-      (this.key = key),
-      (this.ref = ref),
-      (this.props = props);
-  }
+// 有人叫做jsx对象，也有叫做react element的
+function ReactElement(type, key, ref, props) {
+  const element = {
+    // This tag allows us to uniquely identify this as a React Element
+    $$typeof: REACT_ELEMENT_TYPE,
+
+    // Built-in properties that belong on the element
+    type,
+    key,
+    ref,
+    props,
+  };
+
+  return element;
 }

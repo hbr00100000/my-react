@@ -1,22 +1,12 @@
 import { createUpdate, enqueueUpdate } from "./ReactFiberClassUpdateQueue";
 import { createFiberRoot } from "./ReactFiberRoot";
+import { scheduleUpdateOnFiber } from "./ReactFiberWorkLoop";
 
-/**
- * 将传入的真实dom信息转换成fiberRoot和rootFiber,创建一个容器
- * @param {*} containerInfo
- * @param {*} tag
- * @returns
- */
 export const createContainer = (containerInfo, tag) => {
   const initialChildren = null;
   return createFiberRoot(containerInfo, tag, initialChildren);
 };
 
-/**
- *
- * @param {*} element // render(element)
- * @param {*} container // fiberRoot
- */
 export function updateContainer(element, container) {
   // rootFiber
   const current = container.current;

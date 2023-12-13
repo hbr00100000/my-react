@@ -1,3 +1,3 @@
-import { jsxDEV } from "./ReactJSXElement.genuine";
+import { jsxDEV } from "./ReactJSXElement";
 
 export { jsxDEV };

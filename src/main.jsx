@@ -1,20 +1,19 @@
 // import React from 'react'
-// import ReactDOM from 'react-dom/client'
+// import ReactDOM from "react-dom/client";
 // import App from './App.jsx'
 // import './index.css'
 import { createRoot } from "./react-dom";
+import { element_jsx, element_self } from "./sharing-session/element";
 
-// ReactDOM.createRoot(document.getElementById('root')).render(
-//   <React.StrictMode>
-//     <App />
-//   </React.StrictMode>,
-// )
+const rootDomNode = document.getElementById("root");
+// concurrent模式
+const root = createRoot(rootDomNode);
+console.log("element_jsx", element_jsx);
+console.log("element_self", element_self);
+console.dir(rootDomNode);
+console.log("root", root);
 
-const element = <div><span>hello world</span>123</div>
+root.render(element_jsx);
 
-console.log("element",element);
-
-const root = createRoot(document.getElementById("root"))
-console.log(root)
-
-root.render(element);
+// legacy模式
+// ReactDOM.createRoot(document.getElementById("root")).render(element_jsx);

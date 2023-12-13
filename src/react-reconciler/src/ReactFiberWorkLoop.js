@@ -6,3 +6,5 @@ let executionContext = NoContext;
 export function isUnsafeClassRenderPhaseUpdate(fiber) {
   return (executionContext & RenderContext) !== NoContext;
 }
+
+export function scheduleUpdateOnFiber(root, fiber, lane) {}
