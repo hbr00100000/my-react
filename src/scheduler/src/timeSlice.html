@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>time slicer</title>
+  </head>
+  <body></body>
+
+  <script>
+    // 配合Performance查看会很明显；
+    class TimeSlicer {
+      constructor() {
+        this.tasks = [];
+        this.channel = new MessageChannel();
+        this.port1 = this.channel.port1;
+        this.port2 = this.channel.port2;
+        this.isExecuting = false;
+        this.port1.onmessage = this.processTasks.bind(this);
+      }
+
+      addTask(task) {
+        this.tasks.push(task);
+        if (!this.isExecuting) {
+          this.isExecuting = true;
+          this.port2.postMessage("execute");
+        }
+      }
+
+      processTasks() {
+        const startTime = performance.now();
+        while (this.tasks.length > 0 && performance.now() - startTime < 5) {
+          // 5ms time slice
+          const task = this.tasks.shift();
+          task();
+        }
+
+        if (this.tasks.length > 0) {
+          setTimeout(() => this.port2.postMessage("execute"), 0);
+        } else {
+          this.isExecuting = false;
+        }
+      }
+    }
+
+    // Example usage:
+    const timeSlicer = new TimeSlicer();
+
+    function heavyTask() {
+      // Simulate a heavy task
+      let sum = 0;
+      for (let i = 0; i < 10000000; i++) {
+        sum += i;
+      }
+      console.log("Heavy task completed");
+    }
+
+    // Add some tasks to the time slicer
+    for (let i = 0; i < 10; i++) {
+      // 切片
+      timeSlicer.addTask(heavyTask);
+      //不切片
+      // heavyTask();
+    }
+
+    // function cl() {
+    //   let a = 0;
+    //   do {
+    //     a++;
+    //     console.log("我就看看");
+    //   } while (a <= 100000);
+    // }
+    // cl();
+  </script>
+</html>
